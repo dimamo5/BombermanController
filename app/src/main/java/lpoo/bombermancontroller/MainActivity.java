@@ -1,9 +1,10 @@
 package lpoo.bombermancontroller;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -27,13 +28,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
 
         ImageButton explode = (ImageButton) findViewById(R.id.plantBomb);
         explode.setOnTouchListener(new View.OnTouchListener() {
@@ -51,6 +45,22 @@ public class MainActivity extends ActionBarActivity {
                 return false;
             }
         });
+
+        EditText t = (EditText) findViewById(R.id.ip);
+        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        String ip = getResources().getString(R.string.ipAddress);
+
+        t.setText(ip);
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+
 
         return true;
     }
@@ -94,6 +104,11 @@ public class MainActivity extends ActionBarActivity {
         b.setClickable(false);
         b.setText("LIGADO A: " + t.getText().toString());
 
+        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.ipAddress), t.getText().toString());
+        editor.commit();
     }
 
     public void sendPlantBomb(View view) {
