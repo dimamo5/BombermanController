@@ -1,22 +1,19 @@
 package lpoo.bombermancontroller;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Looper;
 import android.util.Log;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.UnknownHostException;
+import java.net.SocketException;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -35,10 +32,11 @@ public class ClientNetwork extends Thread {
     Socket socket;
     String ip;
     ArrayBlockingQueue<String> messagesToSends;
+    Activity context;
 
-    public ClientNetwork(String ip) throws IOException {
+    public ClientNetwork(String ip, Activity context) throws IOException {
 
-
+        this.context = context;
         this.ip = ip;
 
         address = InetAddress.getByName(ip);
@@ -48,15 +46,8 @@ public class ClientNetwork extends Thread {
     }
 
     public void run() {
-        try {
-            socket = new Socket(address, PORT);
 
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        initConn();
 
         while (!connectedToServer) {
             sendPacket("ligar");
@@ -110,6 +101,46 @@ public class ClientNetwork extends Thread {
         return ip;
     }
 
+
+    public void initConn() {
+        try {
+
+            socket = new Socket(address, PORT);
+        } catch (SocketException e) {
+            Log.d("Entra", "coco");
+            Looper.prepare();
+            // 1. Instantiate an AlertDialog.Builder with its constructor
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            // 2. Chain together various setter methods to set the dialog characteristics
+            builder.setMessage("Erro IP")
+                    .setTitle("Network Error");
+
+            // 3. Get the AlertDialog from create()
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            Looper.loop();
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+        } catch (IOException e) {
+
+
+            e.printStackTrace();
+        }
+
+
+        SharedPreferences sharedPref = context.getPreferences(Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("IP", this.ip);
+        editor.commit();
+    }
 }
 
 

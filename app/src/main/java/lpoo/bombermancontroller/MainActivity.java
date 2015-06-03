@@ -1,5 +1,6 @@
 package lpoo.bombermancontroller;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import java.io.IOException;
+import java.net.ConnectException;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -29,26 +31,10 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageButton explode = (ImageButton) findViewById(R.id.plantBomb);
-        explode.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        Log.d("teste", "Down");
-                        return true; // if you want to handle the touch event
-                    case MotionEvent.ACTION_UP:
-                        Log.d("teste", "Up");
-                        // RELEASED
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-            }
-        });
-
         EditText t = (EditText) findViewById(R.id.ip);
         SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
-        String ip = getResources().getString(R.string.ipAddress);
+
+        String ip = sharedPref.getString("IP", "ERRO OBTER STRING");
 
         t.setText(ip);
 
@@ -59,7 +45,6 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
 
 
         return true;
@@ -90,12 +75,13 @@ public class MainActivity extends ActionBarActivity {
         EditText t = (EditText) findViewById(R.id.ip);
 
         try {
-            server = new ClientNetwork(t.getText().toString());
-            server.start();
+            server = new ClientNetwork(t.getText().toString(), this);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+
+        server.start();
         t.setText(server.getIp());
         t.setClickable(false);
         t.setEnabled(false);
@@ -104,31 +90,74 @@ public class MainActivity extends ActionBarActivity {
         b.setClickable(false);
         b.setText("LIGADO A: " + t.getText().toString());
 
-        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
 
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.ipAddress), t.getText().toString());
-        editor.commit();
-    }
+        ImageButton buttonUp = (ImageButton) findViewById(R.id.imageButtonUp);
+        buttonUp.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        server.addMessage("moveUpPressed");
+                        return true; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                        server.addMessage("moveUpReleased");
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+            }
+        });
 
-    public void sendPlantBomb(View view) {
-        server.addMessage("bomba");
-    }
+        ImageButton buttonDown = (ImageButton) findViewById(R.id.imageButtonDown);
+        buttonDown.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        server.addMessage("moveDownPressed");
+                        return true; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                        server.addMessage("moveDownReleased");
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+            }
+        });
 
-    public void sendMoveUp(View view) {
-        server.addMessage("moveup");
-    }
+        ImageButton buttonLeft = (ImageButton) findViewById(R.id.imageButtonLeft);
+        buttonLeft.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        server.addMessage("moveLeftPressed");
+                        return true; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                        server.addMessage("moveLeftReleased");
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+            }
+        });
 
-    public void sendMoveDown(View view) {
-        server.addMessage("moveDown");
-    }
-
-    public void sendMoveLeft(View view) {
-        server.addMessage("moveLeft");
-    }
-
-    public void sendMoveRight(View view) {
-        server.addMessage("moveRight");
+        ImageButton buttonRight = (ImageButton) findViewById(R.id.imageButtonRight);
+        buttonRight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        server.addMessage("moveRightPressed");
+                        return true; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                        server.addMessage("moveRightReleased");
+                        // RELEASED
+                        return true; // if you want to handle the touch event
+                }
+                return false;
+            }
+        });
     }
 
 
