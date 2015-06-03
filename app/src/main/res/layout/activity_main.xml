@@ -1,16 +1,76 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
     <Button
-        android:layout_width="wrap_content"
+        android:id="@+id/buttonConnect"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="envia"
-        android:onClick='connectServer'/>
+        android:text="Connect"
+        android:onClick='connectServer' />
+
     <EditText
-        android:id="@+id/rate"
+        android:id="@+id/ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="194.210.211.42"
+        android:layout_below="@+id/buttonConnect"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Teste"/>
-</LinearLayout>
+        android:src="@drawable/button_controller_up"
+        android:id="@+id/imageButtonUp"
+        android:onClick='sendMoveUp'
+        android:layout_above="@+id/imageButtonLeft"
+        android:layout_alignLeft="@+id/imageButtonDown"
+        android:layout_alignStart="@+id/imageButtonDown" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/button_controller_down"
+        android:id="@+id/imageButtonDown"
+        android:onClick='sendMoveDown'
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="106dp"
+        android:layout_marginStart="106dp" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/button_controller_left"
+        android:id="@+id/imageButtonLeft"
+        android:onClick='sendMoveLeft'
+        android:layout_above="@+id/imageButtonDown"
+        android:layout_toLeftOf="@+id/imageButtonUp"
+        android:layout_toStartOf="@+id/imageButtonUp" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/button_controller_right"
+        android:id="@+id/imageButtonRight"
+        android:onClick='sendMoveRight'
+        android:layout_above="@+id/imageButtonDown"
+        android:layout_toRightOf="@+id/imageButtonDown"
+        android:layout_toEndOf="@+id/imageButtonDown" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/bomba"
+        android:id="@+id/plantBomb"
+        android:layout_alignBottom="@+id/imageButtonRight"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="false"
+        android:layout_marginRight="118dp"
+        android:layout_marginEnd="118dp" />
+
+
+</RelativeLayout>
