@@ -66,6 +66,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/bomba"
         android:id="@+id/plantBomb"
+        android:onClick="plantBomb"
         android:layout_alignBottom="@+id/imageButtonRight"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="false"

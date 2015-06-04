@@ -5,7 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,13 +29,14 @@ public class ClientNetwork extends Thread {
     private PrintWriter out;
     private BufferedReader in;
 
-    boolean connectedToServer = false;
+    public boolean connectedToServer = false;
 
     InetAddress address;
     Socket socket;
     String ip;
     ArrayBlockingQueue<String> messagesToSends;
     Activity context;
+    long lastmessageTime;
 
     public ClientNetwork(String ip, Activity context) throws IOException {
 
@@ -60,6 +64,11 @@ public class ClientNetwork extends Thread {
         while (connectedToServer) {
             if (messagesToSends.peek() != null) {
                 sendPacket(messagesToSends.poll());
+                lastmessageTime=SystemClock.uptimeMillis();
+            }else{
+                if(SystemClock.uptimeMillis()-lastmessageTime>5000){
+                    //addMessage("estou vivo boi");
+                }
             }
 
         }
@@ -102,12 +111,11 @@ public class ClientNetwork extends Thread {
     }
 
 
-    public void initConn() {
+    synchronized public void initConn() {
         try {
 
             socket = new Socket(address, PORT);
         } catch (SocketException e) {
-            Log.d("Entra", "coco");
             Looper.prepare();
             // 1. Instantiate an AlertDialog.Builder with its constructor
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -140,6 +148,7 @@ public class ClientNetwork extends Thread {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("IP", this.ip);
         editor.commit();
+
     }
 }
 

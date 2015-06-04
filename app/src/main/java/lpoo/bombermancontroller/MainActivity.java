@@ -1,6 +1,5 @@
 package lpoo.bombermancontroller;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
@@ -15,7 +14,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import java.io.IOException;
-import java.net.ConnectException;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -82,13 +80,14 @@ public class MainActivity extends ActionBarActivity {
 
 
         server.start();
-        t.setText(server.getIp());
+
+
         t.setClickable(false);
         t.setEnabled(false);
 
         Button b = (Button) findViewById(R.id.buttonConnect);
         b.setClickable(false);
-        b.setText("LIGADO A: " + t.getText().toString());
+        b.setText("LIGADO A: " + server.getIp());
 
 
         ImageButton buttonUp = (ImageButton) findViewById(R.id.imageButtonUp);
@@ -158,7 +157,12 @@ public class MainActivity extends ActionBarActivity {
                 return false;
             }
         });
+
+
     }
 
+    public void plantBomb(View view){
+        server.addMessage("plantBomb");
 
-}
+    }
+};
