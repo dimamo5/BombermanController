@@ -9,9 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import java.io.IOException;
 
@@ -19,6 +21,8 @@ import java.io.IOException;
 public class MainActivity extends ActionBarActivity {
 
     ClientNetwork server;
+    private float mPrevX;
+    private float mPrevY;
 
     public MainActivity() throws IOException {
 
@@ -36,6 +40,58 @@ public class MainActivity extends ActionBarActivity {
 
         t.setText(ip);
 
+
+        ImageButton analog = (ImageButton) findViewById(R.id.analog);
+
+        analog.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                float currX, currY;
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN: {
+
+                        mPrevX = event.getRawX();
+                        mPrevY = event.getRawY();
+                        break;
+                    }
+
+                    case MotionEvent.ACTION_MOVE: {
+
+                        currX = event.getRawX();
+                        currY = event.getRawY();
+
+                        float deltaX=currX - mPrevX;
+                        float deltaY=currY - mPrevY;
+
+                            if(deltaX>25){
+                            deltaX=25;
+                        }
+                        if(deltaY>25){
+                            deltaY = 25;
+                        }
+
+                        view.setTranslationX(deltaX);
+                        view.setTranslationY(deltaY);
+
+
+                        break;
+                    }
+
+
+                    case MotionEvent.ACTION_CANCEL:
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        view.setTranslationX(0);
+                        view.setTranslationY(0);
+
+                        break;
+                }
+
+                return true;
+            }
+        });
     }
 
 
@@ -45,7 +101,7 @@ public class MainActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
 
-        return true;
+        return true;    
     }
 
     @Override
@@ -90,78 +146,9 @@ public class MainActivity extends ActionBarActivity {
         b.setText("LIGADO A: " + server.getIp());
 
 
-        ImageButton buttonUp = (ImageButton) findViewById(R.id.imageButtonUp);
-        buttonUp.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        server.addMessage("moveUpPressed");
-                        return true; // if you want to handle the touch event
-                    case MotionEvent.ACTION_UP:
-                        server.addMessage("moveUpReleased");
-                        // RELEASED
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-            }
-        });
-
-        ImageButton buttonDown = (ImageButton) findViewById(R.id.imageButtonDown);
-        buttonDown.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        server.addMessage("moveDownPressed");
-                        return true; // if you want to handle the touch event
-                    case MotionEvent.ACTION_UP:
-                        server.addMessage("moveDownReleased");
-                        // RELEASED
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-            }
-        });
-
-        ImageButton buttonLeft = (ImageButton) findViewById(R.id.imageButtonLeft);
-        buttonLeft.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        server.addMessage("moveLeftPressed");
-                        return true; // if you want to handle the touch event
-                    case MotionEvent.ACTION_UP:
-                        server.addMessage("moveLeftReleased");
-                        // RELEASED
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-            }
-        });
-
-        ImageButton buttonRight = (ImageButton) findViewById(R.id.imageButtonRight);
-        buttonRight.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        server.addMessage("moveRightPressed");
-                        return true; // if you want to handle the touch event
-                    case MotionEvent.ACTION_UP:
-                        server.addMessage("moveRightReleased");
-                        // RELEASED
-                        return true; // if you want to handle the touch event
-                }
-                return false;
-            }
-        });
-
-
     }
 
-    public void plantBomb(View view){
+    public void plantBomb(View view) {
         server.addMessage("plantBomb");
 
     }
