@@ -9,11 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 
 import java.io.IOException;
 
@@ -21,6 +19,11 @@ import java.io.IOException;
 public class MainActivity extends ActionBarActivity {
 
     ClientNetwork server;
+
+    private enum Dir {LEFT, RIGHT, UP, DOWN, STOP}
+
+    ;
+    private Dir lastMessage;
     private float mPrevX;
     private float mPrevY;
 
@@ -40,58 +43,36 @@ public class MainActivity extends ActionBarActivity {
 
         t.setText(ip);
 
+        ImageButton bb = (ImageButton) findViewById(R.id.plantBomb);
+        bb.setClickable(false);
 
-        ImageButton analog = (ImageButton) findViewById(R.id.analog);
+    }
 
-        analog.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                float currX, currY;
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN: {
+    public String parseMessage(Dir d) {
+        if (d == Dir.LEFT) {
+            return "moveLeft";
+        } else if (d == Dir.DOWN) {
+            return "moveDown";
+        } else if (d == Dir.UP) {
+            return "moveUp";
+        } else if (d == Dir.RIGHT) {
+            return "moveRight";
+        } else {
+            return "Stop";
+        }
+    }
 
-                        mPrevX = event.getRawX();
-                        mPrevY = event.getRawY();
-                        break;
-                    }
+    public Dir parse(double angulo) {
+        if (angulo >= -Math.PI / 4 && angulo < Math.PI / 4) {
+            return Dir.RIGHT;
+        } else if (angulo >= Math.PI / 4 && angulo < 3 * Math.PI / 4) {
+            return Dir.DOWN;
+        } else if (angulo >= -3 * Math.PI / 4 && angulo < -Math.PI / 4) {
+            return Dir.UP;
+        } else {
+            return Dir.LEFT;
+        }
 
-                    case MotionEvent.ACTION_MOVE: {
-
-                        currX = event.getRawX();
-                        currY = event.getRawY();
-
-                        float deltaX=currX - mPrevX;
-                        float deltaY=currY - mPrevY;
-
-                            if(deltaX>25){
-                            deltaX=25;
-                        }
-                        if(deltaY>25){
-                            deltaY = 25;
-                        }
-
-                        view.setTranslationX(deltaX);
-                        view.setTranslationY(deltaY);
-
-
-                        break;
-                    }
-
-
-                    case MotionEvent.ACTION_CANCEL:
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        view.setTranslationX(0);
-                        view.setTranslationY(0);
-
-                        break;
-                }
-
-                return true;
-            }
-        });
     }
 
 
@@ -101,7 +82,7 @@ public class MainActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
 
-        return true;    
+        return true;
     }
 
     @Override
@@ -144,6 +125,70 @@ public class MainActivity extends ActionBarActivity {
         Button b = (Button) findViewById(R.id.buttonConnect);
         b.setClickable(false);
         b.setText("LIGADO A: " + server.getIp());
+
+        final int RADIUS = 80;
+        ImageButton analog = (ImageButton) findViewById(R.id.analog);
+
+        analog.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                float currX, currY;
+                //float centerX =view.getX()+view.getWidth()/2;
+                //float centerY = view.getY()+view.getHeight()/2;
+
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN: {
+
+                        mPrevX = event.getRawX();
+                        mPrevY = event.getRawY();
+                        break;
+                    }
+
+                    case MotionEvent.ACTION_MOVE: {
+
+                        currX = event.getRawX();
+                        currY = event.getRawY();
+
+                        double deltaX = currX - mPrevX;
+                        double deltaY = currY - mPrevY;
+
+                        double angulo = Math.atan2(deltaY, deltaX);
+
+                        if (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) < RADIUS) {
+
+                            view.setTranslationX((float) deltaX);
+                            view.setTranslationY((float) deltaY);
+                        } else {
+                            view.setTranslationX((float) (RADIUS * Math.cos(angulo)));
+                            view.setTranslationY((float) (RADIUS * Math.sin(angulo)));
+                        }
+
+                        //Log.d("Cenas:", Double.toString(angulo));
+
+                        if (lastMessage != parse(angulo)) {
+                            lastMessage = parse(angulo);
+                            server.addMessage(parseMessage(lastMessage));
+                        }
+
+                        break;
+                    }
+
+                    case MotionEvent.ACTION_UP:
+                        view.setTranslationX(0);
+                        view.setTranslationY(0);
+                        lastMessage = Dir.STOP;
+                        server.addMessage(parseMessage(lastMessage));
+
+                        break;
+                }
+
+                return true;
+            }
+        });
+
+        ImageButton bb = (ImageButton) findViewById(R.id.plantBomb);
+        bb.setClickable(true);
 
 
     }

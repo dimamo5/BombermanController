@@ -65,10 +65,7 @@ public class ClientNetwork extends Thread {
             if (messagesToSends.peek() != null) {
                 sendPacket(messagesToSends.poll());
                 lastmessageTime=SystemClock.uptimeMillis();
-            }else{
-                if(SystemClock.uptimeMillis()-lastmessageTime>5000){
-                    //addMessage("estou vivo boi");
-                }
+
             }
 
         }

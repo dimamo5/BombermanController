@@ -1,51 +1,91 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
-    <Button
-        android:id="@+id/buttonConnect"
+
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Connect"
-        android:onClick='connectServer' />
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
-    <EditText
-        android:id="@+id/ip"
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true">
+
+
+            <ImageView
+                android:id="@+id/myImageViewAnalog"
+                android:layout_width="203dp"
+                android:layout_height="230dp"
+                android:src="@drawable/baseanalog"
+                android:layout_gravity="center" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/analog"
+                android:id="@+id/analog"
+                android:background="@null"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </RelativeLayout>
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="194.210.211.42"
-        android:layout_below="@+id/buttonConnect"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <Button
+            android:id="@+id/buttonConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connect"
+            android:onClick='connectServer'
+            android:layout_gravity="center_horizontal" />
+
+        <EditText
+            android:id="@+id/ip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/analog"
-        android:id="@+id/analog"
-        android:layout_marginLeft="81dp"
-        android:layout_marginStart="81dp"
-        android:layout_below="@+id/ip"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="38dp"
-        style="?android:attr/borderlessButtonStyle" />/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true">
 
+            <ImageView
+                android:id="@+id/myImageViewBomb"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/baseanalog"
+                android:layout_gravity="center" />
 
+            <ImageButton
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/bombsingle"
+                android:id="@+id/plantBomb"
+                android:onClick="plantBomb"
+                android:background="@null"
+                android:layout_gravity="center" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/bomba"
-        android:id="@+id/plantBomb"
-        android:onClick="plantBomb"
-        android:layout_marginRight="96dp"
-        android:layout_marginEnd="96dp"
-        android:layout_alignBottom="@+id/analog"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        </FrameLayout>
+    </RelativeLayout>
 
-
-</RelativeLayout>
+</LinearLayout>
